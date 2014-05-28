@@ -8,7 +8,9 @@ import java.net.URLConnection;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.widget.TextView;
+
 
 
 public class MainActivity extends Activity {
@@ -17,8 +19,16 @@ private TextView mView;
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
 		mView=(TextView)findViewById(R.id.view);
-		mView.setText(new String(httpGet("http://www.yahoo.co.jp")));
+		mView.setText(new String(httpGet(createURL())));
+	}
+
+	public String createURL(){
+		String apiURL="http://news.yahooapis.jp/NewsWebService/V2/topics?";
+		String appid="dj0zaiZpPW15bXdMdThNa0FMcSZzPWNvbnN1bWVyc2VjcmV0Jng9NmU-";
+		String category="top";
+		return String.format("%sappid=%s&pickupcategory=%s", apiURL,appid,category);
 	}
 
 	public static String httpGet(String strURL){
