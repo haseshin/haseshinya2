@@ -12,7 +12,10 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Xml;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+
 
 
 
@@ -26,12 +29,13 @@ static private String mArticleURL[];
 static private int mArticleNum;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
-		mView=(TextView)findViewById(R.id.view);
-		mView.setText(new String(httpGet(createURL())));
+		getArticle(createURL());
+		ListView list=(ListView)findViewById(R.id.ListView01);
+		list.setAdapter(new ArrayAdapter<String>(this,R.layout.activity_main1,mArticleTitle));
 	}
 
 	public String createURL(){
@@ -41,7 +45,7 @@ static private int mArticleNum;
 		return String.format("%sappid=%s&pickupcategory=%s", apiURL,appid,category);
 	}
 
-	public static String httpGet(String strURL){
+	public static void getArticle(String strURL){
 		//(1)トライキャッチによるエラー処理
 try{
     //(2)URLクラスを使って通信
@@ -51,17 +55,15 @@ URLConnection connection=url.openConnection();
 connection.setDoInput(true); //データを入力することの宣言
 InputStream stream=connection.getInputStream();
 readXML(stream);
-String data="";
-for(int i=0;i<mArticleNum;i++){
-	data+=mArticleTitle[i];
-}
+
+
+
 //(5)終了処理
 stream.close();
-return data;
+
 }catch(Exception e){
 
-	//(6)エラー処理
-   return e.toString();
+e.printStackTrace();
 }
 	}
 
